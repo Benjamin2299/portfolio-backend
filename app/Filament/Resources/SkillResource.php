@@ -1,0 +1,74 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\SkillResource\Pages;
+use App\Models\Skill;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Table;
+
+class SkillResource extends Resource
+{
+    protected static ?string $model = Skill::class;
+    protected static ?string $navigationIcon = 'heroicon-o-star';
+    protected static ?string $navigationLabel = 'Compétences';
+    protected static ?string $modelLabel = 'Compétence';
+    protected static ?string $pluralModelLabel = 'Compétences';
+
+    public static function form(Form $form): Form
+    {
+        return $form->schema([
+            Forms\Components\TextInput::make('name')
+                ->label('Nom')
+                ->required(),
+            Forms\Components\TextInput::make('category')
+                ->label('Catégorie')
+                ->required(),
+            Forms\Components\TextInput::make('level')
+                ->label('Niveau (0-100)')
+                ->numeric()
+                ->minValue(0)
+                ->maxValue(100)
+                ->default(0),
+            Forms\Components\TextInput::make('icon')
+                ->label('Icône'),
+            Forms\Components\TextInput::make('order')
+                ->label('Ordre')
+                ->numeric()
+                ->default(0),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table->columns([
+            Tables\Columns\TextColumn::make('name')
+                ->label('Nom')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('category')
+                ->label('Catégorie')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('level')
+                ->label('Niveau')
+                ->suffix('%'),
+            Tables\Columns\TextColumn::make('order')
+                ->label('Ordre')
+                ->sortable(),
+        ])
+        ->filters([])
+        ->actions([
+            Tables\Actions\EditAction::make()->modalHeading('Modifier la compétence'),
+            Tables\Actions\DeleteAction::make(),
+        ]);
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListSkills::route('/'),
+        ];
+    }
+}
